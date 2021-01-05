@@ -22,10 +22,10 @@ Until this is a properly distributed via nuget, it must be installed through a l
 
 1. Clone the repo and build the solution
 2. Ensure you see the nuget package in the bin/Debug or bin/Release directory
+3. Add the directory to your nuget settings as a local folder (This will allow composer's package manager to find it)
 
 ![Localnugetfolder](docs/localnugetfolder.png)
 
-3. Add the directory to your nuget settings as a local folder (This will allow composer to find it)
 3. Open your bot in Composer
 4. Eject the Runtime if you have not done so already (C# version) 
 6. Enable the Package Manager feature in the Preview features section of the application settings page
@@ -46,7 +46,7 @@ Until this is a properly distributed via nuget, it must be installed through a l
 
 10. Click Import (composer may take a while to process this step)
 
-NOTE: At this point you can start using the actions in the designer but the bot will fail if you try to run it with the actions in place.
+**NOTE:** At this point you can start using the actions in the designer but the bot will fail if you try to run it with the actions in place.
 
 11. Open the file in your bots directory .\runtime\azurewebapp\Startup.cs and make the following changes
 12. add a using statement at the top
