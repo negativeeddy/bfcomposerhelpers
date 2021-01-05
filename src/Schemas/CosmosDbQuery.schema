@@ -9,22 +9,22 @@
     "Collection": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "Collection",
-      "description": "The Cosmos DB  collection",
+      "description": "The Cosmos DB  collection"
     },
     "Database": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "Database",
-      "description": "The Cosmos DB database",
+      "description": "The Cosmos DB database"
     },
     "ConnectionString": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "ConnectionString",
-      "description": "The Cosmos DB connection string",
+      "description": "The Cosmos DB connection string"
     },
     "Query": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "Query",
-      "description": "The SQL query to execute",
+      "description": "The SQL query to execute"
     },
     "resultProperty": {
       "$ref": "schema:#/definitions/stringExpression",
