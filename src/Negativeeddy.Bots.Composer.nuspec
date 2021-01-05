@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>NegativeEddy.Bots.Composer</id>
-    <version>1.0.0.10</version>
+    <version>1.0.0.12</version>
     <title>NegativeEddy.Bots.Composer</title>
     <authors>NegativeEddy's Bot Composer components</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <dependencies>
         <dependency id="Microsoft.Azure.Cosmos" version="3.15.1" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Azure.EventGrid" version="3.2.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Bot.Builder.Dialogs.Adaptive" version="4.11.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Bot.Builder.Dialogs.Adaptive" version="4.11.0" exclude="Build,Analyzers" />
     </dependencies>
     <contentFiles>
       <files include="schemas/*.schema"/>
