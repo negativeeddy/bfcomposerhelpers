@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0.3preview</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,4 +12,8 @@
     <PackageReference Include="Microsoft.Bot.Builder.Dialogs.Adaptive" Version="4.11.0" />
   </ItemGroup>
 
-</Project>
+  <PropertyGroup>
+    <NuspecFile>Negativeeddy.Bots.Composer.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  </Project>
