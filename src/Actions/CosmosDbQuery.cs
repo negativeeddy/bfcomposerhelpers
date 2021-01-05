@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Negativeeddy.Bots.Composer.Actions
+namespace NegativeEddy.Bots.Composer.Actions
 {
     public class CosmosDbUpsert : Dialog
     {

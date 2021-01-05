@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Negativeeddy.Bots.Composer.Actions
+namespace NegativeEddy.Bots.Composer.Actions
 {
     public class PublishEventGridEvent : Dialog
     {
