@@ -2,19 +2,20 @@
 using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder.Dialogs;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace NegativeEddy.Bots.Composer.Actions
 {
-    public class CosmosDbQuery : Dialog
+    public class CosmosDbUpsert : Dialog
     {
+        private readonly JsonSerializer _serializer = new JsonSerializer();
+
         [JsonConstructor]
-        public CosmosDbQuery([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public CosmosDbUpsert([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
           : base()
         {
             // enable instances of this command as debug break point
@@ -22,7 +23,7 @@ namespace NegativeEddy.Bots.Composer.Actions
         }
 
         [JsonProperty("$kind")]
-        public const string Kind = nameof(CosmosDbQuery);
+        public const string Kind = nameof(CosmosDbUpsert);
 
         [JsonProperty("Collection")]
         public StringExpression Collection { get; set; }
@@ -33,58 +34,93 @@ namespace NegativeEddy.Bots.Composer.Actions
         [JsonProperty("ConnectionString")]
         public StringExpression ConnectionString { get; set; }
 
-        [JsonProperty("Query")]
-        public StringExpression Query { get; set; }
+        [JsonProperty("Document")]
+        public ValueExpression Document { get; set; }
+
+        [JsonProperty("PartitionKey")]
+        public StringExpression PartitionKey { get; set; }
 
         [JsonProperty("resultProperty")]
         public StringExpression ResultProperty { get; set; }
 
         public override async Task<DialogTurnResult> BeginDialogAsync(DialogContext dc, object options = null, CancellationToken cancellationToken = default)
         {
-            var connectionString = ConnectionString.GetValue(dc.State);
-            var databaseName = Database.GetValue(dc.State);
-            var containerName = Collection.GetValue(dc.State);
-            var queryText = Query.GetValue(dc.State);
+            string connectionString = ConnectionString.GetValue(dc.State);
+            string databaseName = Database.GetValue(dc.State);
+            string containerName = Collection.GetValue(dc.State);
+            string partitionKey = PartitionKey.GetValue(dc.State);
+            object document = Document.GetValue(dc.State);
 
-            dynamic[] finalResults = null;
+            var results = await CosmosUpsert(connectionString, databaseName, containerName, document, partitionKey);
 
             if (ResultProperty != null)
             {
-                var queryResult = await CosmosQuery(connectionString, databaseName, containerName, queryText);
-                finalResults = queryResult.ToArray();
-
-                dc.State.SetValue(ResultProperty.GetValue(dc.State), finalResults);
+                dc.State.SetValue(ResultProperty.GetValue(dc.State), results);
             }
 
-            return await dc.EndDialogAsync(result: finalResults, cancellationToken: cancellationToken);
+            return await dc.EndDialogAsync(result: results, cancellationToken: cancellationToken);
         }
 
-        private static async Task<IEnumerable<dynamic>> CosmosQuery(string connectionString, string databaseName, string containerName, string queryText)
+        private async Task<object> CosmosUpsert(string connectionString, string databaseName, string containerName, object document, string partitionKey)
         {
             CosmosClient client = new CosmosClient(connectionString);
             Database database = client.GetDatabase(databaseName);
             Container container = database.GetContainer(containerName);
 
-            List<dynamic> documents = new List<dynamic>();
-            using (FeedIterator setIterator = container.GetItemQueryStreamIterator(queryText))
+            using Stream stream = ToStream(document);
+            using ResponseMessage responseMessage = await container.UpsertItemStreamAsync(
+                partitionKey: new PartitionKey(partitionKey),
+                streamPayload: stream);
+
+            // Item stream operations do not throw exceptions for better performance
+            if (responseMessage.IsSuccessStatusCode)
             {
-                while (setIterator.HasMoreResults)
+                object streamResponse = FromStream(responseMessage.Content);
+                return new { Document = streamResponse };
+            }
+            else
+            {
+                return new
                 {
-                    using (ResponseMessage response = await setIterator.ReadNextAsync())
+                    Error = new
                     {
-                        response.EnsureSuccessStatusCode();
-                        using (StreamReader sr = new StreamReader(response.Content))
-                        using (JsonTextReader jtr = new JsonTextReader(sr))
-                        {
-                            JsonSerializer jsonSerializer = new JsonSerializer();
-                            dynamic array = jsonSerializer.Deserialize<dynamic>(jtr);
-                            documents.AddRange(array.Documents);
-                        }
+                        responseMessage.StatusCode,
+                        Message = responseMessage.ErrorMessage
+                    }
+                };
+            }
+        }
+
+        private object FromStream(Stream stream)
+        {
+            using (stream)
+            {
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
+                    {
+                        return _serializer.Deserialize(jsonTextReader);
                     }
                 }
             }
-            return documents;
         }
 
+        private Stream ToStream(object input)
+        {
+            MemoryStream streamPayload = new MemoryStream();
+            using (StreamWriter streamWriter = new StreamWriter(streamPayload, encoding: Encoding.Default, bufferSize: 1024, leaveOpen: true))
+            {
+                using (JsonWriter writer = new JsonTextWriter(streamWriter))
+                {
+                    writer.Formatting = Formatting.None;
+                    _serializer.Serialize(writer, input);
+                    writer.Flush();
+                    streamWriter.Flush();
+                }
+            }
+
+            streamPayload.Position = 0;
+            return streamPayload;
+        }
     }
 }
