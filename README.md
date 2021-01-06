@@ -18,14 +18,6 @@ A simple action which requires no parameters and just sends "Hello World!" to th
 
 ## Installation
 
-Until this is a properly distributed via nuget, it must be installed through a local nuget share
-
-1. Clone the repo and build the solution
-2. Ensure you see the nuget package in the bin/Debug or bin/Release directory
-3. Add the directory to your nuget settings as a local folder (This will allow composer's package manager to find it)
-
-![Localnugetfolder](docs/localnugetfolder.png)
-
 3. Open your bot in Composer
 4. Eject the Runtime if you have not done so already (C# version) 
 6. Enable the Package Manager feature in the Preview features section of the application settings page
@@ -40,7 +32,7 @@ Until this is a properly distributed via nuget, it must be installed through a l
    
    ![Install Package Button](docs/install_package_button.png)
 
-9. Enter "NegativeEddy.Bots.Composer" as the package name in the dialog (leave the version blank)
+9. Enter "NegativeEddy.Bots.Composer" as the package name in the dialog and enter a version
 
     ![Import Package](docs/import_package.png)
 
