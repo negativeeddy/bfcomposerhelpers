@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
+  "$role": "implements(Microsoft.IDialog)",
+  "title": "Cosmos DB Delete",
+  "description": "This will delete a document in a CosmosDb database",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "Collection": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "Collection",
+      "description": "The Cosmos DB  collection"
+    },
+    "Database": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "Database",
+      "description": "The Cosmos DB database"
+    },
+    "ConnectionString": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "ConnectionString",
+      "description": "The Cosmos DB connection string"
+    },
+    "DocumentId": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "Document ID",
+      "description": "The ID of the document to delete"
+    },
+    "PartitionKey": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "PartitionKey",
+      "description": "The partition key value of the document"
+    },
+    "resultProperty": {
+      "$ref": "schema:#/definitions/stringExpression",
+      "title": "Result",
+      "description": "Value from callers memory to store the result."
+    }
+  }
+}

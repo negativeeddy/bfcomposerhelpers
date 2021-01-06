@@ -85,6 +85,5 @@ namespace NegativeEddy.Bots.Composer.Actions
             }
             return documents;
         }
-
     }
 }
