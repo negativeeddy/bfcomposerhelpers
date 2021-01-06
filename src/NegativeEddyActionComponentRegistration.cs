@@ -15,6 +15,7 @@ namespace NegativeEddy.Bots.Composer.Actions
             return new DeclarativeType[] {
                 new DeclarativeType<CosmosDbQuery>(CosmosDbQuery.Kind),
                 new DeclarativeType<CosmosDbUpsert>(CosmosDbUpsert.Kind),
+                new DeclarativeType<CosmosDbDelete>(CosmosDbDelete.Kind),
                 new DeclarativeType<HelloWorld>(HelloWorld.Kind),
                 new DeclarativeType<PublishEventGridEvent>(PublishEventGridEvent.Kind)
             };
