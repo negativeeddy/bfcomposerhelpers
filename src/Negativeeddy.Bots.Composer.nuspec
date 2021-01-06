@@ -3,11 +3,13 @@
   <metadata>
     <id>NegativeEddy.Bots.Composer</id>
     <version>1.0.0.0-preview</version>
-    <title>NegativeEddy.Bots.Composer</title>
-    <authors>NegativeEddy's Bot Composer components</authors>
+    <title>NegativeEddy's Bot Composer components</title>
+    <authors>negativeeddy</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <description>Custom actions for Bot Composer</description>
+    <projectUrl>https://github.com/negativeeddy/bfcomposerhelpers</projectUrl>
+    <tags>bot bot-framework composer</tags>
     <dependencies>
       <group targetFramework="netstandard2.1">
         <dependency id="Microsoft.Azure.Cosmos" version="3.15.1" exclude="Build,Analyzers" />
@@ -20,8 +22,8 @@
     </contentFiles>
   </metadata>
   <files>
-    <file src=".\bin\Debug\netstandard2.1\*.dll" target="lib/netstandard2.1"/>
-    <file src=".\bin\Debug\netstandard2.1\*.pdb" target="lib/netstandard2.1"/>
+    <file src=".\bin\Release\netstandard2.1\*.dll" target="lib/netstandard2.1"/>
+    <file src=".\bin\Release\netstandard2.1\*.pdb" target="lib/netstandard2.1"/>
     <file src=".\schemas\*.schema" target="schemas"/>
   </files>
 </package>
