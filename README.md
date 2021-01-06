@@ -51,7 +51,7 @@ Until this is a properly distributed via nuget, it must be installed through a l
 11. Open the file in your bots directory .\runtime\azurewebapp\Startup.cs and make the following changes
 12. add a using statement at the top
 ````
-using NegativeEddy.Bots.Composer;
+using NegativeEddy.Bots.Composer.Actions;
 ````
 
 13. Find the section in the Startup() method where that looks like this 
