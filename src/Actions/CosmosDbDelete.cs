@@ -1,11 +1,9 @@
 ﻿using AdaptiveExpressions.Properties;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder.Dialogs;
-using NegativeEddy.Bots.Composer.Serialization;
+using Microsoft.Bot.Builder.TraceExtensions;
 using Newtonsoft.Json;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,6 +56,16 @@ namespace NegativeEddy.Bots.Composer.Actions
             {
                 dc.State.SetValue(ResultProperty.GetValue(dc.State), results);
             }
+
+            await dc.Context.TraceActivityAsync(nameof(CosmosDbDelete), label: "Cosmos DB Delete result",
+                value: new
+                {
+                    Container = containerName,
+                    Database = databaseName,
+                    PartitionKey = partitionKey,
+                    DocumentId = document,
+                    Results = results
+                });
 
             return await dc.EndDialogAsync(result: results, cancellationToken: cancellationToken);
         }

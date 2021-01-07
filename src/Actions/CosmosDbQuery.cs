@@ -1,6 +1,7 @@
 ﻿using AdaptiveExpressions.Properties;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.TraceExtensions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -55,6 +56,15 @@ namespace NegativeEddy.Bots.Composer.Actions
 
                 dc.State.SetValue(ResultProperty.GetValue(dc.State), finalResults);
             }
+
+            await dc.Context.TraceActivityAsync(nameof(CosmosDbQuery), label: "Cosmos DB Query result",
+                value: new
+                {
+                    Query = queryText,
+                    Container = containerName,
+                    Database = databaseName,
+                    Results = finalResults
+                });
 
             return await dc.EndDialogAsync(result: finalResults, cancellationToken: cancellationToken);
         }

@@ -1,6 +1,7 @@
 ﻿using AdaptiveExpressions.Properties;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.TraceExtensions;
 using NegativeEddy.Bots.Composer.Serialization;
 using Newtonsoft.Json;
 using System.IO;
@@ -55,6 +56,16 @@ namespace NegativeEddy.Bots.Composer.Actions
             {
                 dc.State.SetValue(ResultProperty.GetValue(dc.State), results);
             }
+
+            await dc.Context.TraceActivityAsync(nameof(CosmosDbUpsert), label: "Cosmos DB Upsert result",
+                value: new
+                {
+                    Container = containerName,
+                    Database = databaseName,
+                    PartitionKey = partitionKey,
+                    Document = document,
+                    Results = results
+                });
 
             return await dc.EndDialogAsync(result: results, cancellationToken: cancellationToken);
         }
