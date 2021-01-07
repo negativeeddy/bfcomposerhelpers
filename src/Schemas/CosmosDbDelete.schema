@@ -6,10 +6,10 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "Collection": {
+    "Container": {
       "$ref": "schema:#/definitions/stringExpression",
-      "title": "Collection",
-      "description": "The Cosmos DB  collection"
+      "title": "Container",
+      "description": "The Cosmos DB container"
     },
     "Database": {
       "$ref": "schema:#/definitions/stringExpression",
@@ -24,12 +24,12 @@
     "DocumentId": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "Document ID",
-      "description": "The ID of the document to delete"
+      "description": "The Cosmos item id"
     },
     "PartitionKey": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "PartitionKey",
-      "description": "The partition key value of the document"
+      "description": "The partition key for the item"
     },
     "resultProperty": {
       "$ref": "schema:#/definitions/stringExpression",

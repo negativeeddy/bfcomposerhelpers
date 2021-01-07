@@ -8,8 +8,8 @@
   "properties": {
     "Collection": {
       "$ref": "schema:#/definitions/stringExpression",
-      "title": "Collection",
-      "description": "The Cosmos DB  collection"
+      "title": "Container",
+      "description": "The Cosmos DB container"
     },
     "Database": {
       "$ref": "schema:#/definitions/stringExpression",

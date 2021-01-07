@@ -23,8 +23,8 @@ namespace NegativeEddy.Bots.Composer.Actions
         [JsonProperty("$kind")]
         public const string Kind = nameof(CosmosDbUpsert);
 
-        [JsonProperty("Collection")]
-        public StringExpression Collection { get; set; }
+        [JsonProperty("Container")]
+        public StringExpression Container { get; set; }
 
         [JsonProperty("Database")]
         public StringExpression Database { get; set; }
@@ -45,7 +45,7 @@ namespace NegativeEddy.Bots.Composer.Actions
         {
             string connectionString = ConnectionString.GetValue(dc.State);
             string databaseName = Database.GetValue(dc.State);
-            string containerName = Collection.GetValue(dc.State);
+            string containerName = Container.GetValue(dc.State);
             string partitionKey = PartitionKey.GetValue(dc.State);
             object document = Document.GetValue(dc.State);
 

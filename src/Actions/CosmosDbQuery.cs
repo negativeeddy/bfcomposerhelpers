@@ -24,8 +24,8 @@ namespace NegativeEddy.Bots.Composer.Actions
         [JsonProperty("$kind")]
         public const string Kind = nameof(CosmosDbQuery);
 
-        [JsonProperty("Collection")]
-        public StringExpression Collection { get; set; }
+        [JsonProperty("Container")]
+        public StringExpression Container { get; set; }
 
         [JsonProperty("Database")]
         public StringExpression Database { get; set; }

@@ -26,8 +26,8 @@ namespace NegativeEddy.Bots.Composer.Actions
         [JsonProperty("$kind")]
         public const string Kind = nameof(CosmosDbDelete);
 
-        [JsonProperty("Collection")]
-        public StringExpression Collection { get; set; }
+        [JsonProperty("Container")]
+        public StringExpression Container { get; set; }
 
         [JsonProperty("Database")]
         public StringExpression Database { get; set; }
@@ -48,7 +48,7 @@ namespace NegativeEddy.Bots.Composer.Actions
         {
             string connectionString = ConnectionString.GetValue(dc.State);
             string databaseName = Database.GetValue(dc.State);
-            string containerName = Collection.GetValue(dc.State);
+            string containerName = Container.GetValue(dc.State);
             string partitionKey = PartitionKey.GetValue(dc.State);
             string document = DocumentId.GetValue(dc.State);
 
@@ -62,7 +62,7 @@ namespace NegativeEddy.Bots.Composer.Actions
             return await dc.EndDialogAsync(result: results, cancellationToken: cancellationToken);
         }
 
-        private async Task<object> CosmosDelete(string connectionString, string databaseName, string containerName, string documentId, string partitionKey, CancellationToken cancellationToken)
+        private static async Task<dynamic> CosmosDelete(string connectionString, string databaseName, string containerName, string documentId, string partitionKey, CancellationToken cancellationToken)
         {
             CosmosClient client = new CosmosClient(connectionString);
             Database database = client.GetDatabase(databaseName);
@@ -74,12 +74,9 @@ namespace NegativeEddy.Bots.Composer.Actions
             // Item stream operations do not throw exceptions for better performance
             if (responseMessage.IsSuccessStatusCode)
             {
-                var ser = new ObjectSerializer();
-                object streamResponse = ser.FromStream(responseMessage.Content);
                 return new
                 {
                     Success = true,
-                    Document = streamResponse
                 };
             }
             else
