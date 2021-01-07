@@ -43,7 +43,7 @@ namespace NegativeEddy.Bots.Composer.Actions
         {
             var connectionString = ConnectionString.GetValue(dc.State);
             var databaseName = Database.GetValue(dc.State);
-            var containerName = Collection.GetValue(dc.State);
+            var containerName = Container.GetValue(dc.State);
             var queryText = Query.GetValue(dc.State);
 
             dynamic[] finalResults = null;
