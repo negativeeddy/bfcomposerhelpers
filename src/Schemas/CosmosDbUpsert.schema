@@ -6,7 +6,7 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "Collection": {
+    "Container": {
       "$ref": "schema:#/definitions/stringExpression",
       "title": "Container",
       "description": "The Cosmos DB container"
