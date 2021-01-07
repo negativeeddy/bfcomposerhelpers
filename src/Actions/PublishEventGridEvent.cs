@@ -2,6 +2,7 @@
 using Microsoft.Azure.EventGrid;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.TraceExtensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,14 @@ namespace NegativeEddy.Bots.Composer.Actions
             };
 
             await client.PublishEventsAsync(topicHostname, events, cancellationToken);
+
+            await dc.Context.TraceActivityAsync(nameof(PublishEventGridEvent), label: "Event Grid events published",
+                value: new
+                {
+                    TopicHostname = topicHostname,
+                    Endpoint = endpoint,
+                    Events = events,
+                });
 
             return await dc.EndDialogAsync(cancellationToken: cancellationToken);
         }
