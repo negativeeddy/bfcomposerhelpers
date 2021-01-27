@@ -9,6 +9,9 @@ Queries an [Azure Cosmos DB](https://azure.microsoft.com/en-us/services/cosmos-d
 ### Cosmos DB Upsert
 Inserts or updates a document in an [Azure Cosmos DB](https://azure.microsoft.com/en-us/services/cosmos-db/) database
 
+### Cosmos DB Delete
+Deletes a document in an [Azure Cosmos DB](https://azure.microsoft.com/en-us/services/cosmos-db/) database
+
 ### Publish Event Grid Event
 
 Publishes an event to an [Azure Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) topic
