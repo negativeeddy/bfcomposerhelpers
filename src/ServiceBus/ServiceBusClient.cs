@@ -6,6 +6,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -95,26 +96,29 @@ namespace NegativeEddy.Bots.Composer.ServiceBus
             _logger.LogInformation($"Received: {body} from subscription: {_subscriptionName}");
 
             var conversationInfo = body.conversation;
-            ChannelAccount user = new ChannelAccount { Id = conversationInfo.userId, Name = "User", Role = "user" };
-            ChannelAccount bot = new ChannelAccount { Id = conversationInfo.botId, Name = "Bot", Role = "bot" };
-            string conversationId = conversationInfo.conversationId;
-            ConversationAccount conversation = new ConversationAccount(id: conversationId);
             string activityId = conversationInfo.activityId;
             string serviceUrl = conversationInfo.serviceUrl;
             string channelId = conversationInfo.channelId;
+            string conversationId = conversationInfo.conversationId;
+
+            ChannelAccount user = new ChannelAccount { Id = conversationInfo.userId, Name = "User", Role = "user" };
+            ChannelAccount bot = new ChannelAccount { Id = conversationInfo.botId, Name = "Bot", Role = "bot" };
+            ConversationAccount conversation = new ConversationAccount(id: conversationId);
             var conversationReference = new ConversationReference(activityId, user, bot, conversation, channelId, serviceUrl);
 
-            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference, async (turnContext, token) =>
-            {
-                // If you encounter permission-related errors when sending this message, see
-                // https://aka.ms/BotTrustServiceUrl
-                turnContext.Activity.ChannelData = new { Message = body.message, source = "serviceBus" };
-                await _bot.OnTurnAsync(turnContext, token);
-            }, 
-            default(CancellationToken));
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference, callback, default(CancellationToken));
 
             // complete the message. messages are deleted from the queue. 
             await args.CompleteMessageAsync(args.Message);
+
+            async Task callback(ITurnContext turnContext, CancellationToken token)
+            {
+                // If you encounter permission-related errors when sending this message, see
+                // https://aka.ms/BotTrustServiceUrl
+                turnContext.Activity.Name = "ServiceBusMessage";
+                turnContext.Activity.Value = body.message;
+                await _bot.OnTurnAsync(turnContext, token);
+            };
         }
 
         private Task ErrorHandler(ProcessErrorEventArgs args)
