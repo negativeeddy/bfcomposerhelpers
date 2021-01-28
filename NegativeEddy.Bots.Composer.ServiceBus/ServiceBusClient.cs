@@ -1,8 +1,12 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +16,12 @@ namespace NegativeEddy.Bots.Composer.ServiceBus
 {
     public class ServiceBusClientService : IHostedService
     {
+        private readonly IBotFrameworkHttpAdapter _adapter;
+        private readonly IBot _bot;
+        private readonly string _appId;
+
         private readonly ILogger<ServiceBusClientService> _logger;
+
         private readonly string _connectionString;
         private readonly string _topicName;
         private readonly string _subscriptionName;
@@ -20,9 +29,14 @@ namespace NegativeEddy.Bots.Composer.ServiceBus
         private ServiceBusClient _client;
         private ServiceBusProcessor _processor;
 
-        public ServiceBusClientService(ILogger<ServiceBusClientService> logger, IConfiguration config)
+        public ServiceBusClientService(ILogger<ServiceBusClientService> logger, IBotFrameworkHttpAdapter adapter, IConfiguration config, IBot bot)
         {
             _logger = logger;
+
+            _adapter = adapter;
+            _bot = bot;
+            _appId = config["MicrosoftAppId"];
+
             _connectionString = config["serviceBus:connectionString"];
             _topicName = config["serviceBus:topicName"];
             _subscriptionName = config["serviceBus:subscriptionName"];
@@ -70,8 +84,34 @@ namespace NegativeEddy.Bots.Composer.ServiceBus
 
         private async Task MessageHandler(ProcessMessageEventArgs args)
         {
-            string body = args.Message.Body.ToString();
+            dynamic body;
+
+            using (StreamReader sr = new StreamReader(args.Message.Body.ToStream()))
+            using (var jtr = new Newtonsoft.Json.JsonTextReader(sr))
+            {
+                var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
+                body = jsonSerializer.Deserialize<dynamic>(jtr);
+            }
             _logger.LogInformation($"Received: {body} from subscription: {_subscriptionName}");
+
+            var conversationInfo = body.conversation;
+            ChannelAccount user = new ChannelAccount { Id = conversationInfo.userId, Name = "User", Role = "user" };
+            ChannelAccount bot = new ChannelAccount { Id = conversationInfo.botId, Name = "Bot", Role = "bot" };
+            string conversationId = conversationInfo.conversationId;
+            ConversationAccount conversation = new ConversationAccount(id: conversationId);
+            string activityId = conversationInfo.activityId;
+            string serviceUrl = conversationInfo.serviceUrl;
+            string channelId = conversationInfo.channelId;
+            var conversationReference = new ConversationReference(activityId, user, bot, conversation, channelId, serviceUrl);
+
+            await ((BotAdapter)_adapter).ContinueConversationAsync(_appId, conversationReference, async (turnContext, token) =>
+            {
+                // If you encounter permission-related errors when sending this message, see
+                // https://aka.ms/BotTrustServiceUrl
+                turnContext.Activity.ChannelData = new { Message = body.message, source = "serviceBus" };
+                await _bot.OnTurnAsync(turnContext, token);
+            }, 
+            default(CancellationToken));
 
             // complete the message. messages are deleted from the queue. 
             await args.CompleteMessageAsync(args.Message);
