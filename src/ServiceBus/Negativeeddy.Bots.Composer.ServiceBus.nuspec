@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>NegativeEddy.Bots.Composer</id>
+    <version>0.0.0.1</version>
+    <title>NegativeEddy's Bot Composer components</title>
+    <authors>negativeeddy</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <description>Custom actions for Bot Composer</description>
+    <projectUrl>https://github.com/negativeeddy/bfcomposerhelpers</projectUrl>
+    <tags>bot bot-framework composer</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.1">
+        <dependency id="Azure.Messaging.ServiceBus" version="7.0.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="schemas/*.schema"/>
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src=".\bin\Debug\netstandard2.1\*.dll" target="lib/netstandard2.1"/>
+    <file src=".\bin\Debug\netstandard2.1\*.pdb" target="lib/netstandard2.1"/>
+    <file src=".\schemas\*.schema" target="schemas"/>
+  </files>
+</package>
